@@ -8,7 +8,7 @@ test:
 	poetry run pytest -vv tests
 
 test-coverage:
-	poetry run pytest --cov=hexlet_python_package --cov-report xml
+	poetry run pytest --cov=page_loader --cov-report xml
 
 package-install:
 	python3 -m pip install --user --force-reinstall dist/*.whl
