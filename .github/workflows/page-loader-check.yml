@@ -1,4 +1,4 @@
-name: diff-check
+name: page-loader-check
 
 on: [push, pull_request]
 
