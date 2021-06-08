@@ -1,6 +1,7 @@
 """Tools for page downloading."""
-
+import logging
 import os
+import sys
 from urllib.parse import urlparse
 
 import requests
@@ -18,9 +19,16 @@ def write_resource(path, res_content):
     Returns:
         str: Path to resource.
     """
-    with open(path, 'wb+') as resource:
-        resource.write(res_content)
-    return path
+    try:
+        with open(path, 'wb+') as resource:
+            resource.write(res_content)
+            return path
+    except FileNotFoundError as err:
+        logging.error(
+            'The specified path does not exist: %s',
+            path,
+        )
+        sys.exit(err)
 
 
 def is_domain(attr_url):
@@ -50,12 +58,12 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
     """Download resoursce.
 
     Args:
-        url ([type]): [description]
-        output_path ([type], optional): [description]. Defaults to None.
-        files (bool, optional): [description]. Defaults to False.
+        url (str): Page URL.
+        output_path (str, optional): Existing path. Defaults to None.
+        files (bool, optional): True if downloading page resources.
 
     Returns:
-        [type]: [description]
+        str: Path to page.
     """
     # Check for output path.
     if output_path is None:
@@ -75,10 +83,15 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
         path = (os.path.normpath(resource_path)).split(os.sep)
         return os.path.join(path[-2], path[-1])
     else:
+        logging.warning(
+            'Resource is unavailable: %s',
+            url,
+        )
         return 'ERROR'
 
     # Creating dir for local resources.
     files_path = resource_path[:-5] + '_files'
+    logging.info('Files path: %s', files_path)
     create_dir(files_path)
 
     # Soap parse.
@@ -96,4 +109,5 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
             full_tag_url = url + tag['src']
             tag['src'] = download(full_tag_url, files_path, files=True)
 
+    logging.info('Page path: %s', resource_path)
     return write_resource(resource_path, soup_html.encode(formatter='html5'))

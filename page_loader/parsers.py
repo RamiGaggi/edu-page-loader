@@ -40,6 +40,14 @@ def create_arg_parser(args=None):
                                      network and puts it in the specified
                                      existing directory""")
     parser.add_argument(
+        '--log',
+        metavar='\b',
+        type=str,
+        help='specify log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)',
+        default='CRITICAL',
+    )
+
+    parser.add_argument(
         '-o',
         '--output',
         metavar='\b',
@@ -47,5 +55,7 @@ def create_arg_parser(args=None):
         help='output dir (default: current working directory)',
         default=None,
     )
+
     parser.add_argument('url', type=str)
+
     return parser.parse_args(args)

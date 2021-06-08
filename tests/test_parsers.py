@@ -17,5 +17,5 @@ def test_parse_file_name():
 
 def test_create_arg_parser():
     """Test creating arg parser."""
-    arguments = argparse.Namespace(output=None, url='http://google.ru')
+    arguments = argparse.Namespace(log='CRITICAL', output=None, url='http://google.ru')
     assert create_arg_parser(['http://google.ru']) == arguments

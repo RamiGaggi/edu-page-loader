@@ -3,6 +3,7 @@
 import os
 import tempfile
 
+
 import pytest
 import requests
 import requests_mock
@@ -12,6 +13,7 @@ TEST_ADRESS = 'http://mytest.com/caramba123'
 TEST_CSS = 'http://mytest.com/caramba123/assets/application.css'
 TEST_PNG = 'http://mytest.com/caramba123/assets/nodejs.png'
 TEST_HTML = 'http://mytest.com/caramba123/assets/courses.html'
+
 
 @pytest.fixture
 def source_page():
