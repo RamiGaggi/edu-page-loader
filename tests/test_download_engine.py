@@ -13,7 +13,6 @@ TEST_CSS = 'http://mytest.com/caramba123/assets/application.css'
 TEST_PNG = 'http://mytest.com/caramba123/assets/nodejs.png'
 TEST_HTML = 'http://mytest.com/caramba123/assets/courses.html'
 
-
 @pytest.fixture
 def source_page():
     """Return source page in str format."""
@@ -128,3 +127,10 @@ def test_download_nonexistent_res():
     """Download of non-existent web page."""
     with pytest.raises(requests.exceptions.ConnectionError):
         download('http://test-none-xisten.com')
+
+
+def test_download_res_not_found():
+    """Download of non-existent web page."""
+    with requests_mock.Mocker() as mock:
+        mock.get(TEST_ADRESS, text='data', status_code=400)  # noqa:WPS432
+        assert download(TEST_ADRESS) == 'ERROR'
