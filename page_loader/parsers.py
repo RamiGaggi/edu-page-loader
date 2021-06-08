@@ -2,22 +2,29 @@
 
 import argparse
 import re
+from urllib.parse import urlparse
 
 
-def parse_file_name(url):
+def parse_file_name(url, files=False):
     """Return file name in the specified format.
 
     Args:
         url (str): Page url.
+        files (boolean): True for downloading local page resources.
 
     Returns:
         str: https://ru.hexlet.io/courses -> ru-hexlet-io-courses.html
     """
-    without_scheme = url.split('//')[1]
-    file_name = (re.sub('[^a-zA-Z0-9]', '-', without_scheme) + '.html').lower()
-    if file_name.startswith('www-'):
-        return file_name[4:]
-    return file_name
+    without_scheme = ''.join(urlparse(url)[1:])
+
+    if re.search(r'\.[a-zA-Z]*$', without_scheme) and files:
+        dot_split = without_scheme.split('.')
+        dot_to_hyphen = '-'.join(dot_split[:-1])
+        without_ext = re.sub('[^a-zA-Z0-9]', '-', dot_to_hyphen)
+        file_name = without_ext + '.' + dot_split[-1]  # noqa:E501
+    else:
+        file_name = re.sub('[^a-zA-Z0-9]', '-', without_scheme) + '.html'
+    return file_name.lower()
 
 
 def create_arg_parser(args=None):
