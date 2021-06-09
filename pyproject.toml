@@ -13,6 +13,7 @@ python = "^3.9"
 requests = "^2.25.1"
 beautifulsoup4 = "^4.9.3"
 html5lib = "^1.1"
+progress = "^1.5"
 
 [tool.poetry.dev-dependencies]
 wemake-python-styleguide = "^0.15.2"
