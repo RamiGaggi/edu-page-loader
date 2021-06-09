@@ -44,7 +44,7 @@ def create_arg_parser(args=None):
         metavar='\b',
         type=str,
         help='specify log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)',
-        default='CRITICAL',
+        default='ERROR',
     )
 
     parser.add_argument(

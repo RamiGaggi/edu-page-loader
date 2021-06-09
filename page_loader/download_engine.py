@@ -1,12 +1,16 @@
 """Tools for page downloading."""
+
 import logging
 import os
-import sys
 from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
 from page_loader.parsers import parse_file_name
+
+
+class KnownError(Exception):
+    pass
 
 
 def write_resource(path, res_content):
@@ -16,10 +20,14 @@ def write_resource(path, res_content):
         path (str): Path to file.
         res_content (bytes): Content of file.
 
+    Raises:
+        KnownError: Error.
+
     Returns:
         str: Path to resource.
     """
     try:
+        logging.info('Write_resource %s', path)
         with open(path, 'wb+') as resource:
             resource.write(res_content)
             return path
@@ -28,7 +36,7 @@ def write_resource(path, res_content):
             'The specified path does not exist: %s',
             path,
         )
-        sys.exit(err)
+        raise KnownError from err
 
 
 def is_domain(attr_url):
@@ -62,6 +70,9 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
         output_path (str, optional): Existing path. Defaults to None.
         files (bool, optional): True if downloading page resources.
 
+    Raises:
+        KnownError: Error.
+
     Returns:
         str: Path to page.
     """
@@ -72,7 +83,18 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
     # Parse paths, names, get content.
     file_name = parse_file_name(url, files=True) if files else parse_file_name(url)  # noqa: E501
     resource_path = os.path.join(output_path, file_name)
-    req = requests.get(url, stream=True)
+
+    # Check for URL.
+    try:
+        req = requests.get(url, stream=True)
+    except requests.exceptions.ConnectionError as err:
+        logging.debug(err)
+        if files:
+            logging.error('Invalid URL page resource!')
+            return 'ERROR'
+        logging.error('Failed to establish a new connection, check URL!')
+        raise KnownError from err
+
     res_content = req.content.strip()
 
     # Check connection and write.
@@ -83,7 +105,7 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
         path = (os.path.normpath(resource_path)).split(os.sep)
         return os.path.join(path[-2], path[-1])
     else:
-        logging.warning(
+        logging.error(
             'Resource is unavailable: %s',
             url,
         )

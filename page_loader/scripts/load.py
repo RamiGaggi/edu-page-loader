@@ -3,8 +3,9 @@
 """Main script."""
 
 import logging
+import sys
 
-from page_loader.download_engine import download
+from page_loader.download_engine import KnownError, download
 from page_loader.parsers import create_arg_parser
 
 
@@ -24,7 +25,11 @@ def main():
     )
 
     logging.info('Starting...')
-    res_path = download(url, output_path)
+    try:
+        res_path = download(url, output_path)
+    except KnownError:
+        sys.exit(1)
+
     if res_path == 'ERROR':
         print("Page wasn't successfully downloaded")
     else:

@@ -3,11 +3,9 @@
 import os
 import tempfile
 
-
 import pytest
-import requests
 import requests_mock
-from page_loader.download_engine import download
+from page_loader.download_engine import KnownError, download
 
 TEST_ADRESS = 'http://mytest.com/caramba123'
 TEST_CSS = 'http://mytest.com/caramba123/assets/application.css'
@@ -127,7 +125,7 @@ def test_download_in_dir(
 
 def test_download_nonexistent_res():
     """Download of non-existent web page."""
-    with pytest.raises(requests.exceptions.ConnectionError):
+    with pytest.raises(KnownError):
         download('http://test-none-xisten.com')
 
 
