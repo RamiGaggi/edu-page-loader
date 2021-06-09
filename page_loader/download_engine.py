@@ -31,10 +31,10 @@ def write_resource(path, res_content):
         with open(path, 'wb+') as resource:
             resource.write(res_content)
             return path
-    except FileNotFoundError as err:
+    except OSError as err:
         logging.error(
             'The specified path does not exist: %s',
-            path,
+            os.path.dirname(path),
         )
         raise KnownError from err
 

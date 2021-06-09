@@ -129,8 +129,16 @@ def test_download_nonexistent_res():
         download('http://test-none-xisten.com')
 
 
-def test_download_res_not_found():
+def test_download_error_dir(source_page):
     """Download of non-existent web page."""
+    with pytest.raises(KnownError):
+        with requests_mock.Mocker() as mock:
+            mock.get(TEST_ADRESS, text=source_page)
+            download(TEST_ADRESS, output_path='./test1/t!@#!@$123')
+
+
+def test_download_res_not_found():
+    """Download of non-existent resource."""
     with requests_mock.Mocker() as mock:
         mock.get(TEST_ADRESS, text='data', status_code=400)  # noqa:WPS432
         assert download(TEST_ADRESS) == 'ERROR'
