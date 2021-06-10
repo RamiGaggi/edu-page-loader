@@ -57,34 +57,36 @@ def test_download_in_cwd(
 ):
     """Success download of a web page in cwd."""
     cwd = os.getcwd()
-    with requests_mock.Mocker() as mock:
-        mock.get(TEST_ADRESS, text=source_page)
-        mock.get(TEST_PNG, text=resource_page_png)
-        mock.get(TEST_CSS, text=resource_page_css)
-        mock.get(TEST_HTML, text=resource_page_html)
+    try:
+        with requests_mock.Mocker() as mock:
+            mock.get(TEST_ADRESS, text=source_page)
+            mock.get(TEST_PNG, text=resource_page_png)
+            mock.get(TEST_CSS, text=resource_page_css)
+            mock.get(TEST_HTML, text=resource_page_html)
 
-        with tempfile.TemporaryDirectory() as tmp:
-            os.chdir(tmp)
-            path = download(TEST_ADRESS)
-            files_path = path[:-5] + '_files'
-            os.chdir(cwd)
-            with open(path) as res:
-                assert res.read() == expected_page
-            with open(os.path.join(
-                files_path,
-                'mytest-com-caramba123-assets-application.css',
-            )) as css:
-                assert css.read() == resource_page_css
-            with open(os.path.join(
-                files_path,
-                'mytest-com-caramba123-assets-courses.html',
-            )) as html:
-                assert html.read() == resource_page_html
-            with open(os.path.join(
-                files_path,
-                'mytest-com-caramba123-assets-nodejs.png',
-            )) as png:
-                assert png.read() == resource_page_png
+            with tempfile.TemporaryDirectory() as tmp:
+                os.chdir(tmp)
+                path = download(TEST_ADRESS)
+                files_path = path[:-5] + '_files'
+                with open(path) as res:
+                    assert res.read() == expected_page
+                with open(os.path.join(
+                    files_path,
+                    'mytest-com-caramba123-assets-application.css',
+                )) as css:
+                    assert css.read() == resource_page_css
+                with open(os.path.join(
+                    files_path,
+                    'mytest-com-caramba123-assets-courses.html',
+                )) as html:
+                    assert html.read() == resource_page_html
+                with open(os.path.join(
+                    files_path,
+                    'mytest-com-caramba123-assets-nodejs.png',
+                )) as png:
+                    assert png.read() == resource_page_png
+    finally:
+        os.chdir(cwd)
 
 
 def test_download_in_dir(

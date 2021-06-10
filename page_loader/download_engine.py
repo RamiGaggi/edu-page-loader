@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup
 from page_loader.parsers import parse_file_name
+from progress.bar import Bar
 
 
 class KnownError(Exception):
@@ -27,7 +28,7 @@ def write_resource(path, res_content):
         str: Path to resource.
     """
     try:
-        logging.info('Write_resource %s', path)
+        logging.debug('Write_resource %s', path)
         with open(path, 'wb+') as resource:
             resource.write(res_content)
             return path
@@ -113,7 +114,7 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
 
     # Creating dir for local resources.
     files_path = resource_path[:-5] + '_files'
-    logging.info('Files path: %s', files_path)
+    logging.debug('Files path: %s', files_path)
     create_dir(files_path)
 
     # Soap parse.
@@ -123,13 +124,19 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
     scripts = soup_html('script', src=is_domain)
 
     # Make local resources point to downloaded files.
+    local_resources = (*images, *links, *scripts)
+    result_bar = Bar('Loading page resource', max=len(local_resources))
     for tag in (*images, *links, *scripts):
+        result_bar.next()  # noqa: B305
         if tag.name == 'link':
             full_tag_url = url + tag['href']
             tag['href'] = download(full_tag_url, files_path, files=True)
+            logging.info('\n \u2713 %s', full_tag_url)
         else:
             full_tag_url = url + tag['src']
             tag['src'] = download(full_tag_url, files_path, files=True)
+            logging.info('\n \u2713 %s', full_tag_url)
 
-    logging.info('Page path: %s', resource_path)
+    result_bar.finish()
+    logging.debug('Page path: %s', resource_path)
     return write_resource(resource_path, soup_html.encode(formatter='html5'))

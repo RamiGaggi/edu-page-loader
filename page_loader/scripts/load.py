@@ -19,22 +19,20 @@ def main():
         raise ValueError('Invalid log level: %s' % numeric_level_log)
 
     logging.basicConfig(
-        format='%(asctime)s %(message)s',
-        datefmt='%m/%d/%Y %I:%M:%S %p',
+        format='%(message)s',
         level=numeric_level_log,
     )
 
-    logging.info('Starting...')
+    logging.info("Downloading page: '%s'", url)
     try:
         res_path = download(url, output_path)
     except KnownError:
         sys.exit(1)
 
     if res_path == 'ERROR':
-        print("Page wasn't successfully downloaded")
+        logging.error("Page wasn't successfully downloaded")
     else:
-        print("Page was successfully downloaded into '{0}'".format(res_path))
-    logging.info('End')
+        logging.info("Page was successfully downloaded into '%s'", res_path)
 
 
 if __name__ == '__main__':
