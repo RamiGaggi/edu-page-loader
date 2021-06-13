@@ -2,7 +2,8 @@
 
 import logging
 import os
-from urllib.parse import urlparse, urljoin
+import sys
+from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -156,5 +157,5 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
         soup_html.prettify(formatter='html5'),
         content_type='soup',
     )
-    logging.info("Page was successfully downloaded into '%s'", resource_path)
+    print("Page was successfully downloaded into '{0}'".format(resource_path))
     return resource_path
