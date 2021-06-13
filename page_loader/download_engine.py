@@ -40,17 +40,20 @@ def write_resource(path, res_content):
         raise KnownError from err
 
 
-def is_domain(attr_url):
+def is_domain(domain_url=None):
     """Check url for domain.
 
     Args:
-        attr_url (str): URL of resource.
+        domain_url (str): URL of domain resource.
 
     Returns:
         boolean: True if url in domain and exist, else False.
     """
-    url_parser = urlparse(attr_url)
-    return not url_parser.netloc and attr_url is not None
+    def inner(attr_url):  # noqa: WPS430
+        attr = urlparse(attr_url)
+        domain = urlparse(domain_url)
+        return not attr.netloc or attr.netlock == domain.netlock
+    return inner
 
 
 def create_dir(path):
@@ -94,8 +97,7 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
 
         if files:
             logging.error('Invalid URL page resource!')
-            write_resource(resource_path, b'Error occured')
-            return rel_path_to_file
+            return 'Error occured'
 
         logging.error('Failed to establish a new connection, check URL!')
         raise KnownError from err
@@ -115,7 +117,7 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
         )
         if not files:
             raise KnownError('Resource is unavailable!')
-        return 'ERROR'
+        return 'Error occured'
 
     # Creating dir for local resources.
     files_path = resource_path[:-5] + '_files'
@@ -124,9 +126,10 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
 
     # Soap parse.
     soup_html = BeautifulSoup(res_content, features='html5lib')
-    images = soup_html('img', src=is_domain)  # noqa: E501, WPS221
-    links = soup_html('link', href=is_domain)
-    scripts = soup_html('script', src=is_domain)
+    is_url_domain = is_domain(domain_url=url)
+    images = soup_html('img', src=is_url_domain)  # noqa: E501, WPS221
+    links = soup_html('link', href=is_url_domain)
+    scripts = soup_html('script', src=is_url_domain)
 
     # Make local resources point to downloaded files.
     local_resources = (*images, *links, *scripts)
