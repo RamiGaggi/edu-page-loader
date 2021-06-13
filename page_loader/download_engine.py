@@ -34,8 +34,8 @@ def write_resource(path, res_content, content_type='bytes'):
                 resource.write(res_content)
                 return path
         else:
-            with open(path, 'w+') as resource:
-                resource.write(res_content)
+            with open(path, 'w+') as arbitary_resource:
+                arbitary_resource.write(res_content)
                 return path
     except OSError as err:
         logging.error(
@@ -107,7 +107,7 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
         logging.error('Failed to establish a new connection, check URL!')
         raise KnownError from err
 
-    res_content = req.content.strip()
+    res_content = req.content
 
     # Check connection and write. Handling errors [404, 500, ...].
     if req and not files:
