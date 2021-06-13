@@ -57,7 +57,7 @@ def test_download_in_cwd(
 ):
     """Success download of a web page in cwd."""
     cwd = os.getcwd()
-    try:
+    try:  # noqa: WPS501
         with requests_mock.Mocker() as mock:
             mock.get(TEST_ADRESS, text=source_page)
             mock.get(TEST_PNG, text=resource_page_png)
@@ -133,9 +133,10 @@ def test_download_nonexistent_res():
 
 def test_download_error_dir(source_page):
     """Download of non-existent web page."""
-    with pytest.raises(KnownError):
-        with requests_mock.Mocker() as mock:
-            mock.get(TEST_ADRESS, text=source_page)
+    with requests_mock.Mocker() as mock:
+        mock.get(TEST_ADRESS, text=source_page)
+
+        with pytest.raises(KnownError):
             download(TEST_ADRESS, output_path='./test1/t!@#!@$123')
 
 
@@ -143,4 +144,6 @@ def test_download_res_not_found():
     """Download of non-existent resource."""
     with requests_mock.Mocker() as mock:
         mock.get(TEST_ADRESS, text='data', status_code=400)  # noqa:WPS432
-        assert download(TEST_ADRESS) == 'ERROR'
+
+        with pytest.raises(KnownError):
+            download(TEST_ADRESS)

@@ -110,6 +110,8 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
             'Resource is unavailable: %s',
             url,
         )
+        if not files:
+            raise KnownError('Resource is unavailable!')
         return 'ERROR'
 
     # Creating dir for local resources.
