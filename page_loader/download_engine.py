@@ -88,7 +88,7 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
     # Check for URL.
     try:
         req = requests.get(url, stream=True)
-    except requests.exceptions.ConnectionError as err:
+    except Exception as err:
         logging.debug(err)
         if files:
             logging.error('Invalid URL page resource!')
