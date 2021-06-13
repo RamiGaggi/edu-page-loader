@@ -90,9 +90,13 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
         req = requests.get(url, stream=True)
     except Exception as err:
         logging.debug(err)
+
         if files:
             logging.error('Invalid URL page resource!')
-            return 'ERROR'
+            write_resource(resource_path, 'Error occured')
+            path_to_file = (os.path.normpath(resource_path)).split(os.sep)
+            return os.path.join(path_to_file[-2], path_to_file[-1])
+
         logging.error('Failed to establish a new connection, check URL!')
         raise KnownError from err
 
@@ -103,8 +107,8 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
         write_resource(resource_path, res_content)
     elif req and files:
         write_resource(resource_path, res_content)
-        path = (os.path.normpath(resource_path)).split(os.sep)
-        return os.path.join(path[-2], path[-1])
+        path_to_file = (os.path.normpath(resource_path)).split(os.sep)
+        return os.path.join(path_to_file[-2], path_to_file[-1])
     else:
         logging.error(
             'Resource is unavailable: %s',
