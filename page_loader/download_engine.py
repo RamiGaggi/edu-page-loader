@@ -52,7 +52,7 @@ def is_domain(domain_url=None):
     def inner(attr_url):  # noqa: WPS430
         attr = urlparse(attr_url)
         domain = urlparse(domain_url)
-        return not attr.netloc or attr.netlock == domain.netlock
+        return not attr.netloc or attr.netloc == domain.netloc
     return inner
 
 
