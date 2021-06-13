@@ -86,7 +86,7 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
     resource_path = os.path.join(output_path, file_name)
     path_to_file = (os.path.normpath(resource_path)).split(os.sep)
     rel_path_to_file = os.path.join(path_to_file[-2], path_to_file[-1])
-    # Check for URL.
+    # Check for URL. Handling  resource existance.
     try:
         req = requests.get(url, stream=True)
     except Exception as err:
@@ -94,7 +94,7 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
 
         if files:
             logging.error('Invalid URL page resource!')
-            write_resource(resource_path, 'Error occured')
+            write_resource(resource_path, b'Error occured')
             return rel_path_to_file
 
         logging.error('Failed to establish a new connection, check URL!')
@@ -102,7 +102,7 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
 
     res_content = req.content.strip()
 
-    # Check connection and write.
+    # Check connection and write. Handling errors [404, 500, ...].
     if req and not files:
         write_resource(resource_path, res_content)
     elif req and files:
