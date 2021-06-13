@@ -8,9 +8,9 @@ import requests_mock
 from page_loader.download_engine import KnownError, download
 
 TEST_ADRESS = 'http://mytest.com/caramba123'
-TEST_CSS = 'http://mytest.com/caramba123/assets/application.css'
+TEST_CSS = 'http://mytest.com/assets/application.css'
 TEST_PNG = 'http://mytest.com/caramba123/assets/nodejs.png'
-TEST_HTML = 'http://mytest.com/caramba123/assets/courses.html'
+TEST_HTML = 'http://mytest.com/assets/courses.html'
 
 
 @pytest.fixture
@@ -72,12 +72,12 @@ def test_download_in_cwd(
                     assert res.read() == expected_page
                 with open(os.path.join(
                     files_path,
-                    'mytest-com-caramba123-assets-application.css',
+                    'mytest-com-assets-application.css',
                 )) as css:
                     assert css.read() == resource_page_css
                 with open(os.path.join(
                     files_path,
-                    'mytest-com-caramba123-assets-courses.html',
+                    'mytest-com-assets-courses.html',
                 )) as html:
                     assert html.read() == resource_page_html
                 with open(os.path.join(
@@ -110,12 +110,12 @@ def test_download_in_dir(
                 assert res.read() == expected_page
             with open(os.path.join(
                 files_path,
-                'mytest-com-caramba123-assets-application.css',
+                'mytest-com-assets-application.css',
             )) as css:
                 assert css.read() == resource_page_css
             with open(os.path.join(
                 files_path,
-                'mytest-com-caramba123-assets-courses.html',
+                'mytest-com-assets-courses.html',
             )) as html:
                 assert html.read() == resource_page_html
             with open(os.path.join(

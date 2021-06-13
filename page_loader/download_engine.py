@@ -2,7 +2,6 @@
 
 import logging
 import os
-import sys
 from urllib.parse import urljoin, urlparse
 
 import requests
@@ -10,17 +9,20 @@ from bs4 import BeautifulSoup
 from page_loader.parsers import parse_file_name
 from progress.bar import Bar
 
+BYTES = 'bytes'
+
 
 class KnownError(Exception):
     pass
 
 
-def write_resource(path, res_content, content_type='bytes'):
+def write_resource(path, res_content, write_bytes=True):
     """Write content to file.
 
     Args:
         path (str): Path to file.
         res_content (bytes): Content of file.
+        write_bytes (str): Write in bytes or str.
 
     Raises:
         KnownError: Error.
@@ -30,14 +32,13 @@ def write_resource(path, res_content, content_type='bytes'):
     """
     try:
         logging.debug('Write_resource %s', path)
-        if content_type == 'bytes':
+        if write_bytes:
             with open(path, 'wb') as resource:
                 resource.write(res_content)
                 return path
-        else:
-            with open(path, 'w+') as arbitary_resource:
-                arbitary_resource.write(res_content)
-                return path
+        with open(path, 'w+') as arbitary_resource:
+            arbitary_resource.write(res_content)
+            return path
     except OSError as err:
         logging.error(
             'The specified path does not exist: %s',
@@ -56,9 +57,9 @@ def is_domain(domain_url=None):
         boolean: True if url in domain and exist, else False.
     """
     def inner(attr_url):  # noqa: WPS430
-        attr = urlparse(attr_url)
-        domain = urlparse(domain_url)
-        return not attr.netloc or attr.netloc == domain.netloc
+        attr = urlparse(attr_url).netloc
+        domain = urlparse(domain_url).netloc
+        return attr_url is not None and (not attr or attr == domain)
     return inner
 
 
@@ -155,7 +156,6 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
     write_resource(
         resource_path,
         soup_html.prettify(formatter='html5'),
-        content_type='soup',
+        write_bytes=False,
     )
-    print("Page was successfully downloaded into '{0}'".format(resource_path))
     return resource_path

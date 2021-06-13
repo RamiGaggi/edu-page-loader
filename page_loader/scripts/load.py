@@ -23,9 +23,11 @@ def main():
         level=numeric_level_log,
     )
 
-    logging.info("Downloading page: '%s'", url)
+    print("Downloading page: '{0}'", url)
     try:
-        download(url, output_path)
+        print("Page was successfully downloaded into '{0}'".format(
+            download(url, output_path),
+        ))
     except KnownError:
         sys.exit(1)
 
