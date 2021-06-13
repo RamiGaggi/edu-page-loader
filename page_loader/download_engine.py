@@ -14,7 +14,7 @@ class KnownError(Exception):
     pass
 
 
-def write_resource(path, res_content):
+def write_resource(path, res_content, content_type='bytes'):
     """Write content to file.
 
     Args:
@@ -29,9 +29,14 @@ def write_resource(path, res_content):
     """
     try:
         logging.debug('Write_resource %s', path)
-        with open(path, 'wb+') as resource:
-            resource.write(res_content)
-            return path
+        if content_type == 'bytes':
+            with open(path, 'wb') as resource:
+                resource.write(res_content)
+                return path
+        else:
+            with open(path, 'w+') as resource:
+                resource.write(res_content)
+                return path
     except OSError as err:
         logging.error(
             'The specified path does not exist: %s',
@@ -125,7 +130,7 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
     create_dir(files_path)
 
     # Soap parse.
-    soup_html = BeautifulSoup(res_content, features='html5lib')
+    soup_html = BeautifulSoup(res_content, features='html.parser')
     is_url_domain = is_domain(domain_url=url)
     images = soup_html('img', src=is_url_domain)  # noqa: E501, WPS221
     links = soup_html('link', href=is_url_domain)
@@ -147,4 +152,4 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
 
     result_bar.finish()
     logging.debug('Page path: %s', resource_path)
-    return write_resource(resource_path, soup_html.encode(formatter='html5'))
+    return write_resource(resource_path, soup_html.prettify(formatter='html5'), content_type='soup')
