@@ -25,14 +25,9 @@ def main():
 
     logging.info("Downloading page: '%s'", url)
     try:
-        res_path = download(url, output_path)
+        download(url, output_path)
     except KnownError:
         sys.exit(1)
-
-    if res_path == 'ERROR':
-        logging.error("Page wasn't successfully downloaded")
-    else:
-        logging.info("Page was successfully downloaded into '%s'", res_path)
 
 
 if __name__ == '__main__':

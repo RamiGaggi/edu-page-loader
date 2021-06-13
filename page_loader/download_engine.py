@@ -151,5 +151,10 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
             logging.info('\n \u2713 %s', full_tag_url)
 
     result_bar.finish()
-    logging.debug('Page path: %s', resource_path)
-    return write_resource(resource_path, soup_html.prettify(formatter='html5'), content_type='soup')
+    write_resource(
+        resource_path,
+        soup_html.prettify(formatter='html5'),
+        content_type='soup',
+    )
+    logging.info("Page was successfully downloaded into '%s'", resource_path)
+    return resource_path
