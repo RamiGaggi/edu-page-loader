@@ -2,7 +2,7 @@
 
 import logging
 import os
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 
 import requests
 from bs4 import BeautifulSoup
@@ -137,11 +137,11 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
     for tag in (*images, *links, *scripts):
         result_bar.next()  # noqa: B305
         if tag.name == 'link':
-            full_tag_url = url + tag['href']
+            full_tag_url = urljoin(url, tag['href'])
             tag['href'] = download(full_tag_url, files_path, files=True)
             logging.info('\n \u2713 %s', full_tag_url)
         else:
-            full_tag_url = url + tag['src']
+            full_tag_url = urljoin(url, tag['src'])
             tag['src'] = download(full_tag_url, files_path, files=True)
             logging.info('\n \u2713 %s', full_tag_url)
 

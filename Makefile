@@ -5,7 +5,7 @@ build:
 	poetry build
 
 test:
-	poetry run pytest --log-cli-level=INFO -vv tests
+	poetry run pytest --log-cli-level=DEBUG -vv tests
 
 test-coverage:
 	poetry run pytest --cov=page_loader --cov-report xml
