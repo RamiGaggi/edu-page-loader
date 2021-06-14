@@ -23,7 +23,7 @@ def main():
         level=numeric_level_log,
     )
 
-    print("Downloading page: '{0}'", url)
+    print("Downloading page: '{0}'".format(url))
     try:
         print("Page was successfully downloaded into '{0}'".format(
             download(url, output_path),
