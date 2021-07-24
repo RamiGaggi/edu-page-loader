@@ -92,13 +92,13 @@ def download(url, output_path=None, files=False):  # noqa: WPS210
         output_path = os.getcwd()
 
     # Parse paths, names, get content.
-    file_name = parse_file_name(url, files=True) if files else parse_file_name(url)  # noqa: E501
+    file_name = parse_file_name(url, files=files)
     resource_path = os.path.join(output_path, file_name)
     path_to_file = (os.path.normpath(resource_path)).split(os.sep)
     rel_path_to_file = os.path.join(path_to_file[-2], path_to_file[-1])
     # Check for URL. Handling  resource existance.
     try:
-        req = requests.get(url, stream=True)
+        req = requests.get(url)
     except Exception as err:
         logging.debug(err)
 
